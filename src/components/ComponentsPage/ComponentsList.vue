@@ -42,10 +42,16 @@
         
         <!-- 建议操作 -->
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <button class="px-4 py-2 sm:px-6 sm:py-3 bg-[#c23531] text-[#ffffff] rounded-lg hover:bg-[#d48265] transition-colors duration-200 font-medium shadow-sm hover:shadow-md text-sm sm:text-base">
+          <button 
+            @click="$emit('show-all-components')"
+            class="px-4 py-2 sm:px-6 sm:py-3 bg-[#c23531] text-[#ffffff] rounded-lg hover:bg-[#d48265] transition-colors duration-200 font-medium shadow-sm hover:shadow-md text-sm sm:text-base"
+          >
             查看所有组件
           </button>
-          <button class="px-4 py-2 sm:px-6 sm:py-3 bg-[#e8eaed] text-[#6e7074] rounded-lg hover:bg-[#ca8622] hover:text-[#ffffff] transition-all duration-200 font-medium text-sm sm:text-base">
+          <button 
+            @click="$emit('clear-filters')"
+            class="px-4 py-2 sm:px-6 sm:py-3 bg-[#e8eaed] text-[#6e7074] rounded-lg hover:bg-[#ca8622] hover:text-[#ffffff] transition-all duration-200 font-medium text-sm sm:text-base"
+          >
             清除筛选条件
           </button>
         </div>
@@ -73,6 +79,6 @@ export default {
       validator: value => ['grid', 'list'].includes(value)
     }
   },
-  emits: ['select-component']
+  emits: ['select-component', 'show-all-components', 'clear-filters']
 }
 </script> 

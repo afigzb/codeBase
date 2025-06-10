@@ -61,6 +61,8 @@
           :components="filteredComponents"
           :view-mode="viewMode"
           @select-component="selectComponent"
+          @show-all-components="showAllComponents"
+          @clear-filters="clearFilters"
         />
       </div>
     </main>
@@ -211,6 +213,24 @@ export default {
       if (window.innerWidth >= 1024) {
         this.showMobileSidebar = false
       }
+    },
+    
+    // 显示所有组件（保持标签筛选，只重置分类和搜索）
+    showAllComponents() {
+      this.searchQuery = ''
+      this.activeCategory = 'all'
+      // 保持 selectedTags 不变
+      // 移动端自动收起侧边栏
+      this.hideMobileSidebar()
+    },
+    
+    // 清除筛选条件（重置所有筛选条件）
+    clearFilters() {
+      this.searchQuery = ''
+      this.activeCategory = 'all'
+      this.selectedTags = []
+      // 移动端自动收起侧边栏
+      this.hideMobileSidebar()
     }
   }
 }
