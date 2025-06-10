@@ -1,23 +1,25 @@
 <template>
-  <div class="py-16 bg-[#f5f6f7]">
-    <!-- 页面标题 -->
-    <div class="text-center mb-12">
-      <h2 class="text-3xl font-bold text-[#2f4554] mb-4">图表组件演示</h2>
-      <p class="text-lg text-[#6e7074] max-w-2xl mx-auto">
-        体验我们的动态图表组件，支持多种图表类型的实时切换和自动轮播功能
+  <div class="py-12 md:py-16 bg-[#f5f6f7]">
+    <!-- 标题区域 -->
+    <div class="text-center mb-12 md:mb-16 px-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#2f4554] mb-3 md:mb-4">
+        组件演示
+      </h2>
+      <p class="text-base md:text-lg text-[#6e7074] max-w-xl md:max-w-2xl mx-auto">
+        体验动态图表组件的实时切换和自动轮播功能
       </p>
     </div>
 
     <!-- 主要内容区域 -->
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="flex gap-8 items-start">
+    <div class="max-w-6xl mx-auto px-4 md:px-6">
+      <div class="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
         <!-- 左侧：动态图表 -->
-        <div class="w-[700px]">
-          <div class="bg-white rounded-xl shadow-lg border border-[#e8eaed] p-6">
+        <div class="w-full lg:w-[700px] xl:w-[750px]">
+          <div class="bg-white rounded-xl shadow-lg border border-[#e8eaed] p-4 md:p-6">
             <!-- 图表控制区域 -->
-            <div class="mb-6">
-              <div class="mb-4">
-                <h3 class="text-lg font-semibold text-[#2f4554] mb-4">{{ getCurrentChartTitle() }}</h3>
+            <div class="mb-4 md:mb-6">
+              <div class="mb-3 md:mb-4">
+                <h3 class="text-base md:text-lg font-semibold text-[#2f4554] mb-3 md:mb-4">{{ getCurrentChartTitle() }}</h3>
               </div>
               
               <!-- 图表类型选择按钮 -->
@@ -26,7 +28,7 @@
                   v-for="chartType in chartTypes" 
                   :key="chartType.type"
                   :class="[
-                    'px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200',
+                    'px-2 md:px-3 py-1 md:py-1.5 text-xs md:text-sm font-medium rounded-lg transition-all duration-200',
                     currentChartType === chartType.type 
                       ? 'bg-[#c23531] text-white shadow-md transform scale-105' 
                       : 'bg-[#e8eaed] text-[#2f4554] hover:bg-[#d48265] hover:text-white hover:transform hover:scale-105'
@@ -39,12 +41,12 @@
             </div>
             
             <!-- 图表容器 -->
-            <div ref="dynamicChart" class="w-full h-[350px]"></div>
+            <div ref="dynamicChart" class="w-full h-[250px] md:h-[300px] lg:h-[350px]"></div>
           </div>
         </div>
 
         <!-- 右侧：故事描述区域 -->
-        <div>
+        <div class="w-full lg:flex-1">
           <TypewriterStory 
             :chartType="currentChartType"
             :autoAdvance="isStoryMode"

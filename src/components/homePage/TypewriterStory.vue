@@ -1,25 +1,25 @@
 <template>
-  <div class="bg-white w-[400px] rounded-xl shadow-lg border border-[#e8eaed] p-5">
-    <h4 class="text-lg font-semibold text-[#2f4554] mb-4 flex items-center">
+  <div class="bg-white w-full max-w-md lg:max-w-none rounded-xl shadow-lg border border-[#e8eaed] p-4 md:p-5">
+    <h4 class="text-base md:text-lg font-semibold text-[#2f4554] mb-3 md:mb-4 flex items-center">
       <div class="w-2 h-2 bg-[#c23531] rounded-full mr-2"></div>
       聆听我们的故事
     </h4>
     
-    <div class="space-y-4">
+    <div class="space-y-3 md:space-y-4">
       <!-- 图表标题 -->
       <div>
         <h5 class="text-sm font-medium text-[#2f4554] mb-2">{{ currentStory.title }}</h5>
       </div>
 
       <!-- 故事内容 -->
-      <div class="border-t border-[#e8eaed] pt-4 min-h-[200px]">
+      <div class="border-t border-[#e8eaed] pt-3 md:pt-4 min-h-[150px] md:min-h-[200px]">
         <div class="text-sm text-[#6e7074] leading-relaxed">
           {{ displayedText }}<span v-if="isTyping" class="animate-pulse">|</span>
         </div>
       </div>
 
       <!-- 进度指示 -->
-      <div class="border-t border-[#e8eaed] pt-4">
+      <div class="border-t border-[#e8eaed] pt-3 md:pt-4">
         <div class="flex items-center justify-between text-xs text-[#6e7074]">
           <span>正在讲述...</span>
           <div class="flex items-center space-x-1">
