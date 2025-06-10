@@ -1,7 +1,7 @@
 <template>
   <!-- 导航栏 -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#e8eaed] shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="max-w-8xl mx-auto px-4 md:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo区域 -->
         <router-link to="/" class="flex items-center space-x-3 group">
