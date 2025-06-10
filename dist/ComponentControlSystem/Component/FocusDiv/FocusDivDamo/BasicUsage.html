@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusDiv 基础使用示例</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="../src/FocusDiv.js"></script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">FocusDiv 基础回弹效果</h2>
+        
+        <div class="flex items-center justify-center border-2 border-dashed border-gray-300 w-[400px] h-[300px] rounded-lg bg-white/50">
+            <!-- 回弹效果示例 -->
+            <drag-follow max-offset="40" follow-speed="0.012" springConstant="0.6" dampingFactor="0.4" maxBounceTimes="8" bounceThreshold="0.15">
+                <div class="relative bg-gradient-to-r from-purple-500 to-blue-500 w-[280px] h-[80px] rounded-xl text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                    <div class="absolute font-semibold text-lg">
+                        🎯 拖拽我体验回弹效果
+                    </div>
+                </div>
+            </drag-follow>
+        </div>
+        
+        <p class="text-sm text-gray-600 mt-4 text-center max-w-md">
+            拖拽上方的卡片，松开后会有平滑的回弹动画效果
+        </p>
+    </div>
+</body>
+
+</html>

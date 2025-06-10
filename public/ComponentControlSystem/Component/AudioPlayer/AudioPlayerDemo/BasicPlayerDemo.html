@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频播放器 - 基础演示</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .demo-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(102, 123, 234, 0.3);
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+        .demo-title {
+            color: #667eea;
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .demo-description {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+        }
+        .feature-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        .feature-card p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .controls-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(102, 123, 234, 0.1);
+            border-radius: 10px;
+        }
+        .control-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .control-button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+        .playlist-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(245, 87, 108, 0.1);
+            border-radius: 8px;
+            color: #f5576c;
+        }
+        .tips {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 184, 148, 0.1);
+            border-radius: 8px;
+            color: #00b894;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1 class="demo-title">🎵 音频播放器演示</h1>
+        <p class="demo-description">
+            这是一个功能完整的Web Components音频播放器，支持播放列表、多种播放模式、音量控制等功能。
+        </p>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🎮 完整控制</h3>
+                <p>播放/暂停、上一首/下一首、进度条拖拽</p>
+            </div>
+            <div class="feature-card">
+                <h3>🔄 播放模式</h3>
+                <p>顺序播放、单曲循环、列表循环、随机播放</p>
+            </div>
+            <div class="feature-card">
+                <h3>📋 播放列表</h3>
+                <p>支持多首歌曲管理，点击切换播放</p>
+            </div>
+            <div class="feature-card">
+                <h3>🔊 音量控制</h3>
+                <p>音量调节、静音切换、音量显示</p>
+            </div>
+        </div>
+
+        <div class="playlist-info">
+            <strong>当前播放列表：</strong>
+            <br>1. yutaka hirasaka - eternal moment
+            <br>2. のぶなが,ゆうゆ - 深海少女
+            <br>3. iwamizu - Love at First Sight
+        </div>
+
+        <div class="controls-section">
+            <h3>外部控制 API</h3>
+            <button class="control-button" onclick="controlPlayer('play')">播放</button>
+            <button class="control-button" onclick="controlPlayer('pause')">暂停</button>
+            <button class="control-button" onclick="controlPlayer('next')">下一首</button>
+            <button class="control-button" onclick="controlPlayer('prev')">上一首</button>
+            <button class="control-button" onclick="toggleMode()">切换模式</button>
+            <button class="control-button" onclick="playSpecific()">播放第2首</button>
+        </div>
+
+        <div class="tips">
+            💡 提示：
+            <br>• 点击浮动球展开完整播放器界面
+            <br>• 支持进度条点击跳转到指定位置
+            <br>• 播放列表可以点击歌曲名直接切换
+            <br>• 音量滑块支持实时调节
+        </div>
+    </div>
+
+    <!-- 音频播放器组件 -->
+    <audio-player 
+        initial-play-mode="list-loop"
+        auto-play="false"
+        audio-base-path="../resource/audio/"
+        initial-volume="60">
+    </audio-player>
+
+    <script type="module">
+        // 导入音频播放器组件
+        import '../src/AudioPlayer.js';
+        import { AUDIO_CONFIG, PlayerUtils } from '../src/AudioPlayerController.js';
+        
+        // 等待组件加载完成
+        window.addEventListener('DOMContentLoaded', () => {
+            const player = document.querySelector('audio-player');
+        });
+        
+        // 外部控制函数
+        window.controlPlayer = function(action) {
+            const player = document.querySelector('audio-player');
+            if (!player) return;
+            
+            switch(action) {
+                case 'play':
+                    player.play();
+                    break;
+                case 'pause':
+                    player.pause();
+                    break;
+                case 'next':
+                    // 这里需要调用controller的next方法
+                    if (player.controller) {
+                        player.controller.next();
+                    }
+                    break;
+                case 'prev':
+                    if (player.controller) {
+                        player.controller.previous();
+                    }
+                    break;
+            }
+        };
+        
+        window.toggleMode = function() {
+            const player = document.querySelector('audio-player');
+            if (player && player.controller) {
+                player.controller.togglePlayMode();
+            }
+        };
+        
+        window.playSpecific = function() {
+            const player = document.querySelector('audio-player');
+            if (player) {
+                player.playTrack('track_2'); // 播放第2首（のぶなが,ゆうゆ - 深海少女）
+            }
+        };
+    </script>
+</body>
+</html> 

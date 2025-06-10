@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FluidCursor 流体光标示例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            min-height: 100vh;
+            cursor: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #888;
+            font-weight: 400;
+        }
+
+        /* 控制器样式 */
+        .controls {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            border: 1px solid #333;
+        }
+
+        .control-section {
+            margin-bottom: 20px;
+        }
+
+        .control-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-title {
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn {
+            background: #404040;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: none;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #505050;
+            border-color: #666;
+        }
+
+        .btn.active {
+            background: #0066cc;
+            border-color: #0066cc;
+        }
+
+        .btn.destroy {
+            background: #cc3333;
+            border-color: #cc3333;
+        }
+
+        .btn.destroy:hover {
+            background: #dd4444;
+        }
+
+        .btn.init {
+            background: #33cc33;
+            border-color: #33cc33;
+        }
+
+        .btn.init:hover {
+            background: #44dd44;
+        }
+
+        /* 简化的特性区域 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .feature {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .feature-title {
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        /* 使用说明 */
+        .usage {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #333;
+            margin-bottom: 40px;
+        }
+
+        .usage-title {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .usage-content {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .usage-list {
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        .usage-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .usage-list li:before {
+            content: "•";
+            color: #0066cc;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .button-group {
+                justify-content: center;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">FluidCursor</h1>
+            <p class="subtitle">流体光标效果演示</p>
+        </div>
+
+        <!-- 控制器 -->
+        <div class="controls">
+            <div class="control-section">
+                <div class="control-title">效果预设</div>
+                <div class="button-group">
+                    <button class="btn active" data-preset="default">默认</button>
+                    <button class="btn" data-preset="subtle">柔和</button>
+                    <button class="btn" data-preset="intense">强烈</button>
+                    <button class="btn" data-preset="neon">霓虹</button>
+                    <button class="btn" data-preset="minimal">极简</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="control-title">控制选项</div>
+                <div class="button-group">
+                    <button class="btn destroy" id="destroyBtn">销毁光标</button>
+                    <button class="btn init" id="initBtn">重新初始化</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 特性展示 -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-title">流体拖尾</div>
+                <div class="feature-desc">平滑的彩色线条跟随鼠标移动，支持多层渲染和颜色渐变效果。</div>
+            </div>
+            <div class="feature">
+                <div class="feature-title">动态光标</div>
+                <div class="feature-desc">带有脉动效果的光标核心，包含光晕和核心双层结构设计。</div>
+            </div>
+            <div class="feature">
+                <div class="feature-title">灵活配置</div>
+                <div class="feature-desc">支持自定义颜色、线条宽度、拖尾长度等多种参数设置。</div>
+            </div>
+            <div class="feature">
+                <div class="feature-title">高性能</div>
+                <div class="feature-desc">基于Canvas和requestAnimationFrame，提供流畅的动画体验。</div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="usage">
+            <div class="usage-title">使用方法</div>
+            <div class="usage-content">
+                FluidCursor 提供了简单易用的API，支持快速集成和自定义配置。
+                <ul class="usage-list">
+                    <li>创建实例：使用 new FluidCursor().init() 创建并初始化光标效果</li>
+                    <li>预设效果：通过 applyPreset() 方法快速应用预定义的视觉效果</li>
+                    <li>自定义配置：使用 updateConfig() 方法精确控制各项参数</li>
+                    <li>资源管理：调用 destroy() 方法清理资源和事件监听器</li>
+                    <li>链式调用：所有配置方法都支持链式调用，方便组合使用</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            移动鼠标体验流体光标效果
+        </div>
+    </div>
+
+    <!-- 引入FluidCursor类 -->
+    <script src="../src/FluidCursor.js"></script>
+    
+    <script>
+        // 全局变量存储光标实例
+        let fluidCursor = null;
+
+        // 初始化光标
+        function initCursor() {
+            if (fluidCursor) {
+                fluidCursor.destroy();
+            }
+            fluidCursor = new FluidCursor().init();
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initCursor();
+
+            // 预设按钮事件
+            const presetButtons = document.querySelectorAll('[data-preset]');
+            presetButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    presetButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const preset = btn.dataset.preset;
+                    if (fluidCursor) {
+                        if (preset === 'default') {
+                            fluidCursor.destroy();
+                            fluidCursor = new FluidCursor().init();
+                        } else {
+                            fluidCursor.applyPreset(preset);
+                        }
+                    }
+                });
+            });
+
+            // 控制按钮事件
+            document.getElementById('destroyBtn').addEventListener('click', () => {
+                if (fluidCursor) {
+                    fluidCursor.destroy();
+                    fluidCursor = null;
+                }
+            });
+
+            document.getElementById('initBtn').addEventListener('click', () => {
+                initCursor();
+            });
+        });
+    </script>
+</body>
+</html>

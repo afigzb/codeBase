@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拖拽容器示例</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .demo-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(102, 123, 234, 0.3);
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+        .demo-title {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .demo-description {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .draggable-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(102, 123, 234, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
+            cursor: move;
+            transition: transform 0.2s ease;
+        }
+        .draggable-item:hover {
+            transform: scale(1.02);
+        }
+        .draggable-item h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .draggable-item p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+            text-align: center;
+        }
+        .demo-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 180px;
+        }
+        .demo-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        .demo-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        .interactive-element {
+            background: #4ecdc4;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .interactive-element:hover {
+            background: #45b7b8;
+            transform: translateY(-2px);
+        }
+        .tips {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(102, 123, 234, 0.1);
+            border-radius: 8px;
+            color: #667eea;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h2 class="demo-title">拖拽容器示例</h2>
+        <p class="demo-description">
+            以下是可拖拽的容器组件演示。你可以拖拽任意容器到屏幕上的任何位置，体验流畅的拖拽交互效果。
+        </p>
+        <div class="tips">
+            💡 提示：点击并拖拽下方的卡片，体验平滑的拖拽效果和惯性滑动。卡片内的按钮和交互元素不会触发拖拽。
+        </div>
+    </div>
+
+    <!-- 可拖拽的容器示例 -->
+    <draggable-container initial-x-percent="10" initial-y-percent="20">
+        <div class="draggable-item">
+            <h3>🎯 拖拽卡片 1</h3>
+            <p>这是一个可拖拽的容器，支持鼠标和触摸操作</p>
+            <button class="demo-button" draggable-ignore>点击按钮</button>
+        </div>
+    </draggable-container>
+
+    <draggable-container initial-x-percent="60" initial-y-percent="30">
+        <div class="demo-card">
+            <h3>🚀 拖拽卡片 2</h3>
+            <p>拖拽时会有平滑的惯性效果</p>
+            <div class="interactive-element" draggable-ignore>
+                交互元素
+            </div>
+        </div>
+    </draggable-container>
+
+    <draggable-container initial-x-percent="30" initial-y-percent="60">
+        <div class="draggable-item">
+            <h3>✨ 拖拽卡片 3</h3>
+            <p>边界碰撞检测，不会超出屏幕范围</p>
+            <input type="text" placeholder="输入框" draggable-ignore style="padding: 5px; border-radius: 4px; border: none;">
+        </div>
+    </draggable-container>
+
+    <script type="module">
+        // 导入拖拽容器组件
+        import '../src/DragDropContainer.js';
+        
+        // 添加一些交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为按钮添加点击效果
+            document.querySelectorAll('.demo-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.style.background = 'rgba(255, 255, 255, 0.4)';
+                    setTimeout(() => {
+                        this.style.background = 'rgba(255, 255, 255, 0.2)';
+                    }, 150);
+                });
+            });
+            
+            // 为交互元素添加点击效果
+            document.querySelectorAll('.interactive-element').forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(-2px)';
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusDiv 高级层叠效果示例</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="../src/FocusDiv.js"></script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-700">
+    <div class="p-8 space-y-10">
+        <h2 class="text-3xl font-bold text-white mb-8 text-center">FocusDiv 高级层叠效果对比</h2>
+        
+        <!-- 示例1: 透明同尺寸双层效果 -->
+        <div class="w-full">
+            <h3 class="text-lg font-semibold text-gray-300 mb-4 text-center">透明同尺寸双层跟随效果</h3>
+            <div class="flex items-center justify-center border-2 border-dashed border-gray-500 w-[500px] h-[180px] rounded-lg bg-gray-800/30 mx-auto">
+                <drag-follow max-offset="30" follow-speed="0.008" maxBounceTimes="10">
+                    <div class="relative bg-gray-800/70 w-[280px] h-[70px] rounded-lg text-white flex items-center justify-center border border-gray-600 shadow-lg">
+                        <div class="absolute">
+                            <drag-follow max-offset="18" follow-speed="0.012" maxBounceTimes="8">
+                                <div class="relative w-[280px] h-[70px] rounded-lg text-white flex items-center justify-center font-medium">
+                                    <div class="absolute">
+                                        💫 透明容器的文本内容
+                                    </div>
+                                </div>
+                            </drag-follow>
+                        </div>
+                    </div>
+                </drag-follow>
+            </div>
+            <p class="text-xs text-gray-400 mt-2 text-center">双层相同尺寸，内层透明，展现细腻的嵌套跟随效果</p>
+        </div>
+
+        <!-- 示例2: 非透明非等宽高三层效果 -->
+        <div class="w-full">
+            <h3 class="text-lg font-semibold text-gray-300 mb-4 text-center">非透明非等宽高三层渐变效果</h3>
+            <div class="flex items-center justify-center border-2 border-dashed border-gray-500 w-[500px] h-[280px] rounded-lg bg-gray-800/30 mx-auto">
+                <!-- 外层：较大偏移，较慢速度 -->
+                <drag-follow max-offset="45" follow-speed="0.006" maxBounceTimes="12" springConstant="0.4" dampingFactor="0.5">
+                    <div class="relative bg-gradient-to-r from-red-500/80 to-pink-500/80 w-[320px] h-[120px] rounded-2xl flex items-center justify-center shadow-2xl backdrop-blur-sm">
+                        <div class="absolute">
+                            <!-- 中层：中等偏移，中等速度 -->
+                            <drag-follow max-offset="25" follow-speed="0.010" maxBounceTimes="8" springConstant="0.6" dampingFactor="0.4">
+                                <div class="relative bg-gradient-to-r from-blue-500/90 to-cyan-500/90 w-[280px] h-[80px] rounded-xl flex items-center justify-center shadow-xl">
+                                    <div class="absolute">
+                                        <!-- 内层：小偏移，快速响应 -->
+                                        <drag-follow max-offset="12" follow-speed="0.015" maxBounceTimes="5" springConstant="0.8" dampingFactor="0.3">
+                                            <div class="relative bg-gradient-to-r from-yellow-400 to-orange-400 w-[200px] h-[50px] rounded-lg text-gray-900 flex items-center justify-center font-bold shadow-lg">
+                                                <div class="absolute">
+                                                    🚀 三层渐变拖拽效果
+                                                </div>
+                                            </div>
+                                        </drag-follow>
+                                    </div>
+                                </div>
+                            </drag-follow>
+                        </div>
+                    </div>
+                </drag-follow>
+            </div>
+            <div class="text-xs text-gray-400 mt-3 text-center space-y-1">
+                <p>🔴 外层：大偏移量 + 慢响应 + 长回弹 (320×120)</p>
+                <p>🔵 中层：中偏移量 + 中响应 + 中回弹 (280×80)</p>
+                <p>🟡 内层：小偏移量 + 快响应 + 短回弹 (200×50)</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

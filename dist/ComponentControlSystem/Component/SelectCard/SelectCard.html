@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SelectCard 旋转卡片组件演示</title>
+    <script type="module" src="./SelectCard.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: transparent;
+            padding: 2rem;
+            margin: 0;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #374151;
+        }
+        
+        .demo-card p {
+            color: #6b7280;
+            margin: 0 0 1rem 0;
+            line-height: 1.5;
+        }
+        
+        .demo-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .demo-tag {
+            background: #f0fdf4;
+            color: #059669;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .demo-image-card {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .demo-work-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-work-image {
+            height: 200px;
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .demo-work-content {
+            padding: 1rem;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .description {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>SelectCard 旋转卡片组件演示</h1>
+        <p class="description">
+            这是一个基于 Lit 的旋转卡片组件，模仿 WorkCard.vue 的旋转效果。
+            鼠标悬停在卡片上移动鼠标即可看到 3D 旋转效果。
+            组件只控制旋转角度，不控制样式，所有内容通过插槽传入。
+            可以通过 maxRotation 属性自定义最大旋转角度。
+        </p>
+        
+        <div class="demo-grid">
+            <!-- 默认旋转角度示例 (10度) -->
+            <select-card>
+                <div class="demo-card">
+                    <h3>默认旋转 (10度)</h3>
+                    <p>这是使用默认最大旋转角度 10 度的卡片示例，适中的旋转效果。</p>
+                    <div class="demo-tags">
+                        <span class="demo-tag">默认</span>
+                        <span class="demo-tag">10度</span>
+                    </div>
+                </div>
+            </select-card>
+            
+            <!-- 轻微旋转示例 (5度) -->
+            <select-card maxRotation="5">
+                <div class="demo-card">
+                    <h3>轻微旋转 (5度)</h3>
+                    <p>设置最大旋转角度为 5 度，更加细微的旋转效果，适合精致的设计。</p>
+                    <div class="demo-tags">
+                        <span class="demo-tag">轻微</span>
+                        <span class="demo-tag">5度</span>
+                    </div>
+                </div>
+            </select-card>
+            
+            <!-- 强烈旋转示例 (20度) -->
+            <select-card maxRotation="20">
+                <div class="demo-work-card">
+                    <div class="demo-work-image">
+                        强烈旋转效果
+                    </div>
+                    <div class="demo-work-content">
+                        <h3>强烈旋转 (20度)</h3>
+                        <p>设置最大旋转角度为 20 度，更加明显的旋转效果，适合吸引注意力。</p>
+                        <div class="demo-tags">
+                            <span class="demo-tag">强烈</span>
+                            <span class="demo-tag">20度</span>
+                        </div>
+                    </div>
+                </div>
+            </select-card>
+            
+            <!-- 无旋转示例 (0度) -->
+            <select-card maxRotation="0">
+                <div class="demo-card">
+                    <h3>无旋转 (0度)</h3>
+                    <p>设置最大旋转角度为 0 度，完全禁用旋转效果，保持静态。</p>
+                    <div class="demo-tags">
+                        <span class="demo-tag">静态</span>
+                        <span class="demo-tag">0度</span>
+                    </div>
+                </div>
+            </select-card>
+            
+            <!-- 极强旋转示例 (30度) -->
+            <select-card maxRotation="30">
+                <div class="demo-image-card">
+                    极强旋转效果 (30度)
+                </div>
+            </select-card>
+            
+            <!-- 自定义旋转示例 (15度) -->
+            <select-card maxRotation="15">
+                <div class="demo-card">
+                    <h3>自定义旋转 (15度)</h3>
+                    <p>可以根据具体需求自定义任意的最大旋转角度值。</p>
+                    <ul style="color: #6b7280; margin: 1rem 0;">
+                        <li>支持任意角度值</li>
+                        <li>响应式设计</li>
+                        <li>平滑的 3D 旋转动画</li>
+                    </ul>
+                    <div class="demo-tags">
+                        <span class="demo-tag">自定义</span>
+                        <span class="demo-tag">15度</span>
+                    </div>
+                </div>
+            </select-card>
+        </div>
+    </div>
+</body>
+</html> 

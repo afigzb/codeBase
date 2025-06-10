@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaballEffect 鼠标跟随融球效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 中心球 */
+        .center-ball {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ff6b6b, #ee5a24);
+            border-radius: 50%;
+            z-index: 10;
+            animation: centerPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes centerPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(255, 107, 107, 0.6);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 50px rgba(255, 107, 107, 0.9);
+            }
+        }
+
+        /* 中心跟随球 */
+        .main-follower {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #4ecdc4, #45b7af);
+            border-radius: 50%;
+            z-index: 8;
+            transition: transform 0.1s ease-out;
+            animation: followerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes followerGlow {
+            0%, 100% { 
+                box-shadow: 0 0 25px rgba(78, 205, 196, 0.7);
+            }
+            50% { 
+                box-shadow: 0 0 45px rgba(78, 205, 196, 1);
+            }
+        }
+
+        /* 拖尾光标球体 */
+        .cursor-trail {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            background: radial-gradient(circle, #a29bfe, #6c5ce7);
+            will-change: transform, opacity;
+        }
+
+        /* 标题和说明 */
+        .info {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .info h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .info p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>🌊 MetaballEffect 流体光标</h1>
+        <p>移动鼠标体验流体拖尾效果</p>
+    </div>
+
+    <metaball-container id="metaballContainer">
+        <div class="container">
+            <!-- 中心球 -->
+            <div class="center-ball"></div>
+            
+            <!-- 中心跟随球 -->
+            <div class="main-follower" id="mainFollower"></div>
+        </div>
+    </metaball-container>
+
+    <script type="module">
+        // 导入MetaballContainer组件
+        import '../src/MetaballEffect.js';
+        
+        // 等待DOM和组件加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            customElements.whenDefined('metaball-container').then(() => {
+                initializeApp();
+            });
+        });
+
+        function initializeApp() {
+            const metaballContainer = document.getElementById('metaballContainer');
+            const container = document.querySelector('.container');
+            const mainFollower = document.getElementById('mainFollower');
+            
+            // 设置融球效果参数
+            metaballContainer.setBlur(5);
+            metaballContainer.setContrast(25);
+
+            // 鼠标位置
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+
+            // 流体拖尾光标系统
+            class FluidCursor {
+                                 constructor(container) {
+                     this.container = container;
+                     this.trailLength = 20; // 增加拖尾长度，让效果更流畅
+                     this.trailBalls = [];
+                     this.mouseHistory = [];
+                    
+                    this.init();
+                    this.startAnimation();
+                }
+
+                init() {
+                    // 预创建拖尾球体池
+                    for (let i = 0; i < this.trailLength; i++) {
+                        const ball = document.createElement('div');
+                        ball.className = 'cursor-trail';
+                        ball.style.position = 'absolute';
+                        ball.style.pointerEvents = 'none';
+                        ball.style.borderRadius = '50%';
+                        ball.style.display = 'none';
+                        this.container.appendChild(ball);
+                        this.trailBalls.push({
+                            element: ball,
+                            x: 0,
+                            y: 0,
+                            targetX: 0,
+                            targetY: 0
+                        });
+                    }
+
+                    // 监听鼠标移动
+                    document.addEventListener('mousemove', (e) => {
+                        this.updateMousePosition(e.clientX, e.clientY);
+                    });
+                }
+
+                                 updateMousePosition(clientX, clientY) {
+                     const containerRect = this.container.getBoundingClientRect();
+                     mouseX = clientX;
+                     mouseY = clientY;
+                     
+                     const relativeX = clientX - containerRect.left;
+                     const relativeY = clientY - containerRect.top;
+                     
+                     // 添加到历史记录，带时间戳
+                     this.mouseHistory.unshift({ 
+                         x: relativeX, 
+                         y: relativeY, 
+                         timestamp: Date.now() 
+                     });
+                     
+                     // 限制历史记录长度
+                     if (this.mouseHistory.length > this.trailLength * 2) {
+                         this.mouseHistory = this.mouseHistory.slice(0, this.trailLength * 2);
+                     }
+                 }
+
+                startAnimation() {
+                    const animate = () => {
+                        this.updateTrail();
+                        requestAnimationFrame(animate);
+                    };
+                    animate();
+                }
+
+                                 updateTrail() {
+                     if (this.mouseHistory.length === 0) return;
+
+                     const currentTime = Date.now();
+                     const maxAge = 100; // 1秒后开始淡出
+
+                     for (let i = 0; i < this.trailLength; i++) {
+                         const ball = this.trailBalls[i];
+                         const element = ball.element;
+                         
+                         // 计算目标位置（调整间距让球更紧密）
+                         const historyIndex = Math.min(Math.floor(i * 0.8), this.mouseHistory.length - 1);
+                         
+                         if (historyIndex < this.mouseHistory.length) {
+                             const targetPos = this.mouseHistory[historyIndex];
+                             
+                             // 检查时间，超过1秒的球开始淡出并销毁
+                             const age = currentTime - targetPos.timestamp;
+                             if (age > maxAge) {
+                                 // 淡出效果
+                                 const fadeProgress = Math.min((age - maxAge) / 500, 1); // 0.5秒淡出
+                                 if (fadeProgress >= 1) {
+                                     element.style.display = 'none';
+                                     continue;
+                                 }
+                             }
+                             
+                             // 平滑插值到目标位置
+                             const lerp = 0.4; // 稍微提高响应速度
+                             ball.targetX = targetPos.x;
+                             ball.targetY = targetPos.y;
+                             
+                             ball.x += (ball.targetX - ball.x) * lerp;
+                             ball.y += (ball.targetY - ball.y) * lerp;
+                             
+                             // 计算大小和透明度
+                             const progress = i / this.trailLength;
+                             const size = Math.max(12, 55 * (1 - progress));
+                             let opacity = Math.max(0.1, 0.9 * (1 - progress));
+                             
+                             // 时间淡出效果
+                             if (age > maxAge) {
+                                 const fadeProgress = (age - maxAge) / 500;
+                                 opacity *= (1 - fadeProgress);
+                             }
+                             
+                             // 动态颜色
+                             const hue = (ball.x / this.container.offsetWidth * 120 + 240) % 360;
+                             const saturation = 70 + progress * 20;
+                             const lightness = 65 - progress * 15;
+                             
+                             // 应用样式
+                             element.style.display = 'block';
+                             element.style.width = size + 'px';
+                             element.style.height = size + 'px';
+                             element.style.left = (ball.x - size / 2) + 'px';
+                             element.style.top = (ball.y - size / 2) + 'px';
+                             element.style.opacity = opacity;
+                             element.style.background = `radial-gradient(circle, hsl(${hue}, ${saturation}%, ${lightness}%), hsl(${hue}, ${saturation + 10}%, ${lightness - 10}%))`;
+                         } else {
+                             element.style.display = 'none';
+                         }
+                     }
+                     
+                     // 清理过期的历史记录
+                     this.mouseHistory = this.mouseHistory.filter(pos => 
+                         currentTime - pos.timestamp < maxAge + 500
+                     );
+                 }
+            }
+
+            // 主跟随球更新函数
+            function updateMainFollower() {
+                const rect = container.getBoundingClientRect();
+                const containerCenterX = rect.left + rect.width / 2;
+                const containerCenterY = rect.top + rect.height / 2;
+                
+                // 计算相对于容器中心的位置
+                const relativeX = mouseX - containerCenterX;
+                const relativeY = mouseY - containerCenterY;
+                
+                // 限制移动范围和添加阻尼
+                const maxDistance = 150; // 最大移动距离
+                const distance = Math.sqrt(relativeX * relativeX + relativeY * relativeY);
+                
+                let targetX = relativeX;
+                let targetY = relativeY;
+                
+                if (distance > maxDistance) {
+                    targetX = (relativeX / distance) * maxDistance;
+                    targetY = (relativeY / distance) * maxDistance;
+                }
+                
+                // 应用阻尼系数
+                targetX *= 0.3;
+                targetY *= 0.3;
+                
+                mainFollower.style.transform = `translate(${targetX}px, ${targetY}px)`;
+            }
+
+            // 初始化流体光标
+            const fluidCursor = new FluidCursor(container);
+
+            // 主跟随球更新循环
+            function animateMainFollower() {
+                updateMainFollower();
+                requestAnimationFrame(animateMainFollower);
+            }
+            animateMainFollower();
+
+            // 窗口大小改变处理
+            window.addEventListener('resize', () => {
+                mouseX = window.innerWidth / 2;
+                mouseY = window.innerHeight / 2;
+            });
+
+            console.log('流体拖尾光标效果已加载');
+        }
+    </script>
+</body>
+</html>

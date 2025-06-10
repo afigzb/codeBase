@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TreeSelect 独立选择模式示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .controls {
+            margin: 15px 0;
+        }
+        .controls button {
+            margin-right: 10px;
+            padding: 6px 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .controls button:hover {
+            background: #218838;
+        }
+        .output {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f1f1f1;
+            border: 1px solid #ccc;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 1px solid #28a745;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        .description {
+            background: #e8f5e8;
+            padding: 12px;
+            border-left: 3px solid #28a745;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TreeSelect 独立选择模式示例</h1>
+        
+        <div class="description">
+            <strong>独立选择模式 (auto-select-parent="false")：</strong><br>
+            • 点击父节点不会自动选中子节点<br>
+            • 选中子节点不会自动选中父节点<br>
+            • 每个节点独立选择，互不影响<br>
+            • getSelectedNodes() 返回所有被选中的节点<br>
+            • 适合需要精确控制选择范围的场景
+        </div>
+        
+        <tree-select id="treeIndependent" auto-select-parent="false"></tree-select>
+        
+        <div class="controls">
+            <button onclick="showSelected()">获取选中节点</button>
+            <button onclick="clearAll()">清空选择</button>
+        </div>
+        
+        <div id="output" class="output">点击"获取选中节点"查看结果</div>
+    </div>
+
+    <script type="module">
+        import '../src/TreeSelect.js';
+
+        // 示例数据
+        const sampleData = [
+            {
+                id: 1,
+                name: "项目根目录",
+                parentId: null,
+                type: "folder",
+                order: 1
+            },
+            {
+                id: 2,
+                name: "src",
+                parentId: 1,
+                type: "folder",
+                order: 1
+            },
+            {
+                id: 3,
+                name: "components",
+                parentId: 2,
+                type: "folder",
+                order: 1
+            },
+            {
+                id: 4,
+                name: "Header.js",
+                parentId: 3,
+                type: "file",
+                order: 1
+            },
+            {
+                id: 5,
+                name: "Footer.js",
+                parentId: 3,
+                type: "file",
+                order: 2
+            },
+            {
+                id: 6,
+                name: "utils",
+                parentId: 2,
+                type: "folder",
+                order: 2
+            },
+            {
+                id: 7,
+                name: "helpers.js",
+                parentId: 6,
+                type: "file",
+                order: 1
+            },
+            {
+                id: 8,
+                name: "docs",
+                parentId: 1,
+                type: "folder",
+                order: 2
+            },
+            {
+                id: 9,
+                name: "README.md",
+                parentId: 8,
+                type: "file",
+                order: 1
+            }
+        ];
+
+        // 初始化树组件
+        document.addEventListener('DOMContentLoaded', () => {
+            const tree = document.getElementById('treeIndependent');
+            tree.data = sampleData;
+        });
+
+        // 全局函数
+        window.showSelected = function() {
+            const tree = document.getElementById('treeIndependent');
+            const output = document.getElementById('output');
+            const selected = tree.getSelectedNodes();
+            
+            output.textContent = `选中的节点 (${selected.length} 个):\n${JSON.stringify(selected, null, 2)}`;
+        };
+
+        window.clearAll = function() {
+            const tree = document.getElementById('treeIndependent');
+            tree.treeData.forEach(node => {
+                tree._traverseTree([node], n => {
+                    n.checked = false;
+                    n.indeterminate = false;
+                });
+            });
+            tree._notifySelectedNodesChanged();
+            tree.requestUpdate();
+        };
+    </script>
+</body>
+</html> 
