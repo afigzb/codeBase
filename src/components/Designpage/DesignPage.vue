@@ -86,7 +86,12 @@
             <div class="absolute inset-0 bg-gradient-to-br from-[#c23531]/5 to-transparent rounded-2xl transform rotate-1 transition-transform duration-500 group-hover:rotate-2"></div>
             <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-[#e8eaed]/50 shadow-sm hover:shadow-md transition-all duration-500">
               <div class="w-12 h-12 bg-gradient-to-br from-[#c23531] to-[#d48265] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <span class="text-white text-xl">🎯</span>
+                <!-- 专业目标图标 -->
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                  <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="12" cy="12" r="1"/>
+                </svg>
               </div>
               <h3 class="text-xl font-medium text-[#2f4554] mb-4">既专业又不冷冰冰</h3>
               <p class="text-[#6e7074] leading-relaxed text-sm mb-4">
@@ -103,7 +108,13 @@
             <div class="absolute inset-0 bg-gradient-to-br from-[#d48265]/5 to-transparent rounded-2xl transform -rotate-1 transition-transform duration-500 group-hover:-rotate-2"></div>
             <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-[#e8eaed]/50 shadow-sm hover:shadow-md transition-all duration-500">
               <div class="w-12 h-12 bg-gradient-to-br from-[#d48265] to-[#ca8622] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <span class="text-white text-xl">⚖️</span>
+                <!-- 平衡图标 -->
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18m0-18l-8 8h16l-8-8z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 11l4 4h8l4-4"/>
+                  <line x1="8" y1="15" x2="8" y2="19"/>
+                  <line x1="16" y1="15" x2="16" y2="19"/>
+                </svg>
               </div>
               <h3 class="text-xl font-medium text-[#2f4554] mb-4">既整齐又有点意思</h3>
               <p class="text-[#6e7074] leading-relaxed text-sm mb-4">
@@ -120,7 +131,11 @@
             <div class="absolute inset-0 bg-gradient-to-br from-[#ca8622]/5 to-transparent rounded-2xl transform rotate-0.5 transition-transform duration-500 group-hover:rotate-1"></div>
             <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-[#e8eaed]/50 shadow-sm hover:shadow-md transition-all duration-500">
               <div class="w-12 h-12 bg-gradient-to-br from-[#ca8622] to-[#61a0a8] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <span class="text-white text-xl">💝</span>
+                <!-- 功能美学图标 -->
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                </svg>
               </div>
               <h3 class="text-xl font-medium text-[#2f4554] mb-4">既实用又赏心悦目</h3>
               <p class="text-[#6e7074] leading-relaxed text-sm mb-4">
@@ -156,7 +171,11 @@
                   <div class="text-xs opacity-80">PRIMARY</div>
                 </div>
                 <div class="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm group-hover:scale-110 transition-transform duration-300">
-                  ♠
+                  <!-- 主要操作图标 -->
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="6" fill="none" stroke="white" stroke-width="2"/>
+                  </svg>
                 </div>
               </div>
               <h4 class="font-medium text-[#2f4554] mb-2">深红 - 主角</h4>
@@ -172,7 +191,11 @@
                   <div class="text-xs opacity-80">SECONDARY</div>
                 </div>
                 <div class="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm group-hover:scale-110 transition-transform duration-300">
-                  ♥
+                  <!-- 次要操作图标 -->
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <polygon points="12,2 22,20 2,20" stroke-width="2"/>
+                    <circle cx="12" cy="14" r="2" fill="currentColor"/>
+                  </svg>
                 </div>
               </div>
               <h4 class="font-medium text-[#2f4554] mb-2">橙色 - 配角</h4>
@@ -188,7 +211,10 @@
                   <div class="text-xs opacity-80">ACCENT</div>
               </div>
                 <div class="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm group-hover:scale-110 transition-transform duration-300">
-                  ♦
+                  <!-- 装饰图标 -->
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+                  </svg>
                 </div>
               </div>
               <h4 class="font-medium text-[#2f4554] mb-2">黄色 - 点缀</h4>
@@ -204,7 +230,12 @@
                   <div class="text-xs opacity-80">NEUTRAL</div>
                 </div>
                 <div class="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm group-hover:scale-110 transition-transform duration-300">
-                  ♣
+                  <!-- 基础结构图标 -->
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2"/>
+                    <line x1="3" y1="9" x2="21" y2="9" stroke-width="2"/>
+                    <line x1="9" y1="21" x2="9" y2="9" stroke-width="2"/>
+                  </svg>
                 </div>
               </div>
               <h4 class="font-medium text-[#2f4554] mb-2">深蓝灰 - 基调</h4>
@@ -334,7 +365,10 @@
            <div class="group cursor-pointer">
              <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-[#e8eaed]/50 hover:border-[#c23531]/30 transition-all duration-500 hover:shadow-lg hover:-translate-y-1">
                <div class="w-16 h-16 bg-[#c23531] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                 <span class="text-white text-2xl">👆</span>
+                 <!-- 悬停交互图标 -->
+                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+                 </svg>
                </div>
               <h3 class="text-lg font-medium text-[#2f4554] mb-2 group-hover:text-[#c23531] transition-colors duration-300">细腻悬停</h3>
               <p class="text-sm text-[#6e7074] leading-relaxed">
@@ -350,7 +384,13 @@
            <div class="group cursor-pointer">
              <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-[#e8eaed]/50 hover:border-[#d48265]/30 transition-all duration-500 hover:shadow-lg">
                <div class="w-16 h-16 bg-[#d48265] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300">
-                 <span class="text-white text-2xl">⚡</span>
+                 <!-- 渐进动画图标 -->
+                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                   <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                   <circle cx="8" cy="16" r="1" fill="currentColor" opacity="0.7"/>
+                   <circle cx="16" cy="8" r="1" fill="currentColor" opacity="0.7"/>
+                 </svg>
                </div>
               <h3 class="text-lg font-medium text-[#2f4554] mb-2 group-hover:text-[#d48265] transition-colors duration-300">渐进动画</h3>
               <p class="text-sm text-[#6e7074] leading-relaxed">
@@ -366,7 +406,11 @@
            <div class="group cursor-pointer">
              <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-[#e8eaed]/50 hover:border-[#ca8622]/30 transition-all duration-500 hover:shadow-lg">
                <div class="w-16 h-16 bg-[#ca8622] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300">
-                 <span class="text-white text-2xl transform group-hover:rotate-12 transition-transform duration-300">🎯</span>
+                 <!-- 反馈机制图标 -->
+                 <svg class="w-8 h-8 text-white group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                   <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                 </svg>
                </div>
               <h3 class="text-lg font-medium text-[#2f4554] mb-2 group-hover:text-[#ca8622] transition-colors duration-300">即时反馈</h3>
               <p class="text-sm text-[#6e7074] leading-relaxed">
@@ -385,17 +429,17 @@
            <div class="relative max-w-2xl mx-auto">
              <div class="absolute left-0 top-1/2 w-full h-0.5 bg-[#e8eaed]"></div>
              <div class="flex justify-between items-center relative">
-               <div class="text-center bg-white px-4 py-2">
+               <div class="text-center bg-white/60 px-4 py-2">
                  <div class="w-4 h-4 bg-[#c23531] rounded-full mx-auto mb-2"></div>
                  <div class="text-sm font-medium text-[#2f4554]">100ms</div>
                  <div class="text-xs text-[#6e7074]">即时反馈</div>
                </div>
-               <div class="text-center bg-white px-4 py-2">
+               <div class="text-center bg-white/60 px-4 py-2">
                  <div class="w-4 h-4 bg-[#d48265] rounded-full mx-auto mb-2"></div>
                  <div class="text-sm font-medium text-[#2f4554]">300ms</div>
                  <div class="text-xs text-[#6e7074]">悬停效果</div>
                </div>
-               <div class="text-center bg-white px-4 py-2">
+               <div class="text-center bg-white/60 px-4 py-2">
                  <div class="w-4 h-4 bg-[#ca8622] rounded-full mx-auto mb-2"></div>
                  <div class="text-sm font-medium text-[#2f4554]">500ms</div>
                  <div class="text-xs text-[#6e7074]">页面切换</div>

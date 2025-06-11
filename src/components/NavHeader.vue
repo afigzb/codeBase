@@ -21,13 +21,13 @@
         
         <!-- 桌面端导航 -->
         <div class="hidden md:flex items-center space-x-8">
-          <router-link 
-            to="/design" 
-            class="nav-item"
+          <a
+            @click="navigateWithScrollTop('/design')"
+            class="nav-item cursor-pointer"
             :class="{ 'nav-item-active': $route.path === '/design' }"
           >
             设计
-          </router-link>
+          </a>
           
           <a
             @click="handleComponentsClick"
@@ -75,14 +75,13 @@
     <transition name="mobile-menu">
       <div v-if="showMobileMenu" class="md:hidden bg-white border-t border-[#e8eaed]">
         <div class="px-4 py-4 space-y-3">
-          <router-link 
-            to="/design" 
-            @click="closeMobileMenu"
-            class="mobile-nav-item"
+          <a
+            @click="navigateWithScrollTop('/design')"
+            class="mobile-nav-item cursor-pointer"
             :class="{ 'mobile-nav-item-active': $route.path === '/design' }"
           >
             设计
-          </router-link>
+          </a>
           <a
             @click="handleComponentsClick"
             class="mobile-nav-item cursor-pointer"
@@ -130,11 +129,21 @@ export default {
     handleComponentsClick() {
       this.closeMobileMenu()
       
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      
       if (this.$route.path === '/components') {
         window.dispatchEvent(new CustomEvent('reset-components-page'))
       } else {
         this.$router.push('/components')
       }
+    },
+    
+    // 通用的导航跳转方法，包含回到顶部功能
+    navigateWithScrollTop(to) {
+      this.closeMobileMenu()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      this.$router.push(to)
     }
   }
 }

@@ -97,48 +97,94 @@
         
         <!-- 展示项目列表 -->
         <div class="space-y-6 sm:space-y-8">
-          <div 
+          <lazy-loader
             v-for="(demo, index) in componentData.demonstrations" 
             :key="demo.id"
-            :class="[
-              'demo-item flex flex-col lg:flex-row lg:items-center',
-              demo.side === 'right' ? 'lg:flex-row-reverse' : '',
-              'space-y-4 lg:space-y-0 lg:space-x-6',
-              demo.side === 'right' ? 'lg:space-x-reverse' : ''
-            ]"
+            :placeholder-icon="demo.icon"
+            :placeholder-title="demo.title"
+            :placeholder-description="`${demo.title} 演示加载中...`"
+            container-class="demo-item"
+            :load-delay="index * 100"
+            :min-placeholder-time="200"
+            @load="handleDemoLoad(demo)"
+            @loaded="handleDemoLoaded(demo)"
           >
-            <div class="demo-description flex-1 order-2 lg:order-1">
-              <h3 class="text-lg sm:text-xl font-semibold text-[#2f4554] mb-2 sm:mb-3">{{ demo.title }}</h3>
-              <p class="text-sm sm:text-base text-[#6e7074] mb-3 sm:mb-4">{{ demo.description }}</p>
-              <ul class="text-xs sm:text-sm text-[#9ca3af] space-y-1" v-if="demo.features">
-                <li v-for="feature in demo.features" :key="feature" class="flex items-center">
-                  <span class="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[#ca8622] rounded-full mr-2 flex-shrink-0"></span>
-                  {{ feature }}
-                </li>
-              </ul>
-            </div>
-            <div class="demo-preview flex-1 order-1 lg:order-2">
-              <!-- 使用CodePreview组件展示HTML内容 -->
-              <div 
-                v-if="ContentLoader.getContent(demo)" 
-                class="preview-area"
-                :ref="`demo-preview-${demo.id}`"
-                style="height: 250px; min-height: 250px;"
-              >
-                <!-- CodePreview组件会在mounted时初始化 -->
-              </div>
-              <!-- 占位符 -->
-              <div v-else class="preview-area bg-[#f8f9fa] border-2 border-dashed border-[#c4c9d0] rounded-lg h-48 sm:h-56 md:h-64 flex items-center justify-center">
-                <div class="text-center text-[#6e7074]">
-                  <div class="w-10 h-10 sm:w-14 sm:h-14 bg-[#c23531]/8 rounded-lg mx-auto mb-2 sm:mb-3 flex items-center justify-center">
-                    <span class="text-lg sm:text-xl">{{ demo.icon }}</span>
+            <!-- 自定义占位符 -->
+            <template #placeholder="{ isIntersecting }">
+              <div :class="[
+                'flex flex-col lg:flex-row lg:items-center',
+                demo.side === 'right' ? 'lg:flex-row-reverse' : '',
+                'space-y-4 lg:space-y-0 lg:space-x-6',
+                demo.side === 'right' ? 'lg:space-x-reverse' : ''
+              ]">
+                <div class="demo-description flex-1 order-2 lg:order-1">
+                  <h3 class="text-lg sm:text-xl font-semibold text-[#2f4554] mb-2 sm:mb-3">{{ demo.title }}</h3>
+                  <p class="text-sm sm:text-base text-[#6e7074] mb-3 sm:mb-4">{{ demo.description }}</p>
+                  <div class="space-y-1">
+                    <div class="h-3 bg-[#f0f0f0] rounded animate-pulse"></div>
+                    <div class="h-3 bg-[#f0f0f0] rounded animate-pulse w-4/5"></div>
+                    <div class="h-3 bg-[#f0f0f0] rounded animate-pulse w-3/5"></div>
                   </div>
-                  <p class="font-medium text-sm sm:text-base">{{ demo.title }}</p>
-                  <p class="text-xs sm:text-sm">预览内容加载中...</p>
+                </div>
+                <div class="demo-preview flex-1 order-1 lg:order-2">
+                  <div class="preview-area bg-[#f8f9fa] border-2 border-dashed border-[#c4c9d0] rounded-lg h-48 sm:h-56 md:h-64 flex items-center justify-center">
+                    <div class="text-center text-[#6e7074]">
+                      <div class="w-10 h-10 sm:w-14 sm:h-14 bg-[#c23531]/8 rounded-lg mx-auto mb-2 sm:mb-3 flex items-center justify-center">
+                        <div v-if="isIntersecting" class="animate-spin w-4 h-4 border-2 border-[#c23531] border-t-transparent rounded-full"></div>
+                        <span v-else class="text-lg sm:text-xl">{{ demo.icon }}</span>
+                      </div>
+                      <p class="font-medium text-sm sm:text-base">{{ demo.title }}</p>
+                      <p class="text-xs sm:text-sm">
+                        {{ isIntersecting ? '正在加载演示...' : '滚动到此处开始加载' }}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </template>
+
+            <!-- 实际内容 -->
+            <template #default="{ isLoaded }">
+              <div :class="[
+                'flex flex-col lg:flex-row lg:items-center',
+                demo.side === 'right' ? 'lg:flex-row-reverse' : '',
+                'space-y-4 lg:space-y-0 lg:space-x-6',
+                demo.side === 'right' ? 'lg:space-x-reverse' : ''
+              ]">
+                <div class="demo-description flex-1 order-2 lg:order-1">
+                  <h3 class="text-lg sm:text-xl font-semibold text-[#2f4554] mb-2 sm:mb-3">{{ demo.title }}</h3>
+                  <p class="text-sm sm:text-base text-[#6e7074] mb-3 sm:mb-4">{{ demo.description }}</p>
+                  <ul class="text-xs sm:text-sm text-[#9ca3af] space-y-1" v-if="demo.features">
+                    <li v-for="feature in demo.features" :key="feature" class="flex items-center">
+                      <span class="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[#ca8622] rounded-full mr-2 flex-shrink-0"></span>
+                      {{ feature }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="demo-preview flex-1 order-1 lg:order-2">
+                  <!-- 使用CodePreview组件展示HTML内容 -->
+                  <div 
+                    v-if="ContentLoader.getContent(demo) && isLoaded" 
+                    class="preview-area overflow-hidden rounded-lg border border-[#e8eaed]"
+                    :ref="`demo-preview-${demo.id}`"
+                    style="height: 300px; min-height: 250px;"
+                  >
+                    <!-- CodePreview组件会在loaded事件中初始化 -->
+                  </div>
+                  <!-- 加载失败占位符 -->
+                  <div v-else class="preview-area bg-[#f8f9fa] border-2 border-dashed border-[#c4c9d0] rounded-lg h-48 sm:h-56 md:h-64 flex items-center justify-center">
+                    <div class="text-center text-[#6e7074]">
+                      <div class="w-10 h-10 sm:w-14 sm:h-14 bg-[#c23531]/8 rounded-lg mx-auto mb-2 sm:mb-3 flex items-center justify-center">
+                        <span class="text-lg sm:text-xl">⚠️</span>
+                      </div>
+                      <p class="font-medium text-sm sm:text-base">{{ demo.title }}</p>
+                      <p class="text-xs sm:text-sm">内容加载失败</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </lazy-loader>
         </div>
       </div>
 
@@ -193,6 +239,7 @@
 <script>
 import { getComponentData } from './B_Data/index.js';
 import { ContentLoader } from './CodeEditorPreview/Utils/ContentLoader.js';
+import LazyLoader from './components/LazyLoader.vue';
 
 // 动态导入CodePreview组件
 let CodePreview = null;
@@ -209,6 +256,9 @@ import('./CodeEditorPreview/CodeEditorPreview.js').catch(error => {
 
 export default {
   name: 'ComponentDetail',
+  components: {
+    LazyLoader
+  },
   props: {
     component: {
       type: Object,
@@ -220,14 +270,12 @@ export default {
     return {
       componentData: null,
       previewInstances: {}, // 存储CodePreview实例
+      loadedDemos: new Set(), // 跟踪已加载的demo
       ContentLoader // 暴露给模板使用
     };
   },
   async mounted() {
     await this.loadComponentData();
-    this.$nextTick(() => {
-      this.initializePreviewComponents();
-    });
   },
   beforeUnmount() {
     this.destroyPreviewComponents();
@@ -236,9 +284,9 @@ export default {
     'component.id': {
       async handler() {
         await this.loadComponentData();
-        this.$nextTick(() => {
-          this.initializePreviewComponents();
-        });
+        // 重置加载状态
+        this.loadedDemos.clear();
+        this.destroyPreviewComponents();
       },
       immediate: false
     }
@@ -293,7 +341,71 @@ export default {
       this.previewInstances = {};
     },
 
+    /**
+     * 处理演示开始加载
+     */
+    handleDemoLoad(demo) {
+      console.log(`开始加载演示: ${demo.title}`);
+    },
 
+    /**
+     * 处理演示加载完成
+     */
+    async handleDemoLoaded(demo) {
+      if (this.loadedDemos.has(demo.id)) {
+        return; // 避免重复加载
+      }
+
+      this.loadedDemos.add(demo.id);
+      console.log(`演示加载完成: ${demo.title}`);
+
+      // 等待DOM更新后初始化CodePreview
+      await this.$nextTick();
+      
+      // 为这个特定的demo初始化CodePreview
+      await this.initializeSingleDemo(demo);
+    },
+
+    /**
+     * 初始化单个演示的CodePreview
+     */
+    async initializeSingleDemo(demo) {
+      if (!CodePreview) {
+        console.warn('CodePreview组件未加载');
+        return;
+      }
+
+      const content = ContentLoader.getContent(demo);
+      if (!content) {
+        console.warn(`无法获取演示内容: ${demo.id}`);
+        return;
+      }
+
+      const refName = `demo-preview-${demo.id}`;
+      const container = this.$refs[refName];
+      
+      if (container && container[0]) {
+        try {
+          // 加载实际内容
+          const loadedContent = await ContentLoader.loadContent(content);
+          const previewInstance = await CodePreview.create(
+            container[0], 
+            loadedContent,
+            {
+              width: '100%',
+              height: '300px'
+            }
+          );
+          
+          this.previewInstances[demo.id] = previewInstance;
+          console.log(`CodePreview实例创建成功: ${demo.title}`);
+        } catch (error) {
+          console.error(`初始化演示失败: ${demo.title}`, error);
+        }
+      } else {
+        console.warn(`找不到容器元素: ${refName}`);
+      }
+    }
   }
 }
 </script>
@@ -336,6 +448,20 @@ export default {
   .online-experience-container {
     min-height: 500px;
   }
+}
+
+/* 骨架屏动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 </style> 

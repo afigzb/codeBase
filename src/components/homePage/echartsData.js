@@ -126,6 +126,199 @@ const transactionRecords = [
 ];
 
 // =====================================
+// 动态图表数据处理函数
+// =====================================
+
+/**
+ * 根据图表类型获取正确的数据格式和配置
+ * @param {string} type - 图表类型
+ * @param {Array} rawData - 原始数据
+ * @returns {Object} 包含chartType、data和config的对象
+ */
+export function getChartDataAndConfig(type, rawData = visitorActivities) {
+  switch (type) {
+    case 'bar':
+    case 'line':
+      return {
+        chartType: type,
+        data: createCartesianData(rawData),
+        config: {
+          boundaryGap: type === 'bar'
+        }
+      }
+    
+    case 'pie':
+    case 'rose':
+      return {
+        chartType: 'pie',
+        data: createPieData(rawData),
+        config: type === 'rose' ? { roseType: 'area' } : {}
+      }
+    
+    case 'radar':
+      return {
+        chartType: 'radar',
+        data: createRadarData(rawData),
+        config: {}
+      }
+    
+    case 'scatter':
+      return {
+        chartType: 'scatter',
+        data: createScatterData(rawData),
+        config: {}
+      }
+    
+    default:
+      return {
+        chartType: 'bar',
+        data: createCartesianData(rawData),
+        config: {}
+      }
+  }
+}
+
+/**
+ * 创建直角坐标系数据（柱状图/折线图）
+ * @param {Array} rawData - 原始数据
+ * @returns {Object} 转换后的图表数据
+ */
+export function createCartesianData(rawData) {
+  const monthlyStats = {}
+  
+  rawData.forEach(activity => {
+    const key = `${activity.month}-${activity.activity}`
+    if (!monthlyStats[key]) {
+      monthlyStats[key] = {
+        month: activity.month,
+        activity: activity.activity,
+        total_visits: 0
+      }
+    }
+    monthlyStats[key].total_visits += activity.visits
+  })
+  
+  const converted = EChartsDataConverter.convertToEChartsData(
+    Object.values(monthlyStats),
+    { categoryField: 'month', valueField: 'total_visits', seriesField: 'activity' },
+    'bar'
+  )
+  
+  return {
+    xAxis: converted.xAxis.data,
+    series: converted.series.map(series => ({
+      name: series.name,
+      data: series.data
+    }))
+  }
+}
+
+/**
+ * 创建饼图数据
+ * @param {Array} rawData - 原始数据
+ * @returns {Object} 转换后的图表数据
+ */
+export function createPieData(rawData) {
+  const activityStats = {}
+  
+  rawData.forEach(activity => {
+    if (!activityStats[activity.activity]) {
+      activityStats[activity.activity] = 0
+    }
+    activityStats[activity.activity] += activity.visits
+  })
+  
+  const pieData = Object.entries(activityStats).map(([name, value]) => ({
+    name,
+    value
+  }))
+  
+  return {
+    series: [{
+      data: pieData
+    }]
+  }
+}
+
+/**
+ * 创建雷达图数据
+ * @param {Array} rawData - 原始数据
+ * @returns {Object} 转换后的图表数据
+ */
+export function createRadarData(rawData) {
+  const componentStats = {}
+  
+  rawData.forEach(activity => {
+    if (!componentStats[activity.component]) {
+      componentStats[activity.component] = {
+        '浏览组件': 0,
+        '下载源码': 0,
+        '使用文档': 0
+      }
+    }
+    componentStats[activity.component][activity.activity] += activity.visits
+  })
+  
+  const activities = ['浏览组件', '下载源码', '使用文档']
+  const maxValues = activities.map(activity => {
+    return Math.max(...Object.values(componentStats).map(comp => comp[activity] || 0))
+  })
+  
+  return {
+    indicator: activities.map((activity, index) => ({
+      name: activity,
+      max: maxValues[index] * 1.2
+    })),
+    series: [{
+      data: Object.keys(componentStats).slice(0, 3).map(component => ({
+        name: component,
+        value: activities.map(activity => componentStats[component][activity] || 0)
+      }))
+    }]
+  }
+}
+
+/**
+ * 创建散点图数据
+ * @param {Array} rawData - 原始数据
+ * @returns {Object} 转换后的图表数据
+ */
+export function createScatterData(rawData) {
+  const scatterData = {}
+  
+  rawData.forEach(activity => {
+    if (!scatterData[activity.activity]) {
+      scatterData[activity.activity] = []
+    }
+    scatterData[activity.activity].push([activity.duration, activity.visits])
+  })
+  
+  return {
+    series: Object.entries(scatterData).map(([activity, data]) => ({
+      name: activity,
+      data: data
+    }))
+  }
+}
+
+/**
+ * 获取当前图表标题
+ * @param {string} chartType - 图表类型
+ * @returns {string} 图表标题
+ */
+export function getChartTitle(chartType) {
+  const titles = {
+    bar: '月度活动统计 - 柱状图展示',
+    line: '活动趋势分析 - 折线图展示',
+    pie: '行为类型分布 - 饼图展示',
+    rose: '行为类型分布 - 玫瑰图展示',
+    radar: '组件多维度分析 - 雷达图展示',
+    scatter: '时长与访问次数关系 - 散点图展示'
+  }
+  return titles[chartType] || '数据展示'
+}
+
+// =====================================
 // 基于业务逻辑的数据分析和图表构建
 // =====================================
 

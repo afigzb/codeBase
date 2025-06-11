@@ -48,7 +48,7 @@
         <!-- 右侧：故事描述区域 -->
         <div class="w-full lg:flex-1">
           <TypewriterStory 
-            :chartType="currentChartType"
+            :storyKey="currentChartType"
             :autoAdvance="isStoryMode"
             @story-complete="onStoryComplete"
             @story-changed="onStoryChanged"
@@ -64,12 +64,11 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { createChart } from '@/components/Echarts/src/EchartFactory/EchartFactory2.js'
 import {
-  visitorActivities as rawVisitorActivities
+  visitorActivities as rawVisitorActivities,
+  getChartDataAndConfig,
+  getChartTitle
 } from './echartsData.js'
 import TypewriterStory from './TypewriterStory.vue'
-
-// 直接导入原始数据表
-import { EChartsDataConverter } from '@/components/Echarts/src/Utils/DataConversionFunction.js'
 
 // 响应式数据（从导入的数据创建）
 const visitorActivities = ref([...rawVisitorActivities])
@@ -95,8 +94,6 @@ const chartTypes = [
   { type: 'scatter', label: '散点图' }
 ]
 
-
-
 onMounted(() => {
   initDynamicChart()
 })
@@ -106,12 +103,10 @@ onUnmounted(() => {
   dynamicChartInstance?.dispose()
 })
 
-
-
 // 初始化动态图表
 function initDynamicChart() {
   if (dynamicChart.value) {
-    const { data, config, chartType } = getChartDataAndConfig(currentChartType.value)
+    const { data, config, chartType } = getChartDataAndConfig(currentChartType.value, visitorActivities.value)
     dynamicChartInstance = createChart(dynamicChart.value, chartType, 'minimal')
     dynamicChartInstance.update(data, config)
   }
@@ -122,9 +117,9 @@ function switchChartType(type, isManual = true) {
   currentChartType.value = type
   
   // 手动点击时停止故事模式
-  if (isManual && isStoryMode.value) {
-    isStoryMode.value = false
-  }
+  // if (isManual && isStoryMode.value) {
+  //   isStoryMode.value = false
+  // }
   
   if (!dynamicChartInstance) {
     initDynamicChart()
@@ -132,7 +127,7 @@ function switchChartType(type, isManual = true) {
   }
   
   // 获取转换后的数据和配置
-  const { data, config, chartType } = getChartDataAndConfig(type)
+  const { data, config, chartType } = getChartDataAndConfig(type, visitorActivities.value)
   
   // 切换图表类型
   dynamicChartInstance.switchType(chartType)
@@ -147,183 +142,20 @@ function switchChartType(type, isManual = true) {
   })
 }
 
-
-
 // 故事模式事件处理
 function onStoryComplete() {
   // 故事完成，可以在这里添加额外逻辑
-  console.log('Story completed for chart type:', currentChartType.value)
+  console.log('Story completed for key:', currentChartType.value)
 }
 
-function onStoryChanged(newChartType) {
-  // 故事组件请求切换图表类型
-  switchChartType(newChartType, false) // false表示非手动操作
-}
-
-// 根据图表类型获取正确的数据格式和配置
-function getChartDataAndConfig(type) {
-  const rawData = visitorActivities.value
-  
-  switch (type) {
-    case 'bar':
-    case 'line':
-      return {
-        chartType: type,
-        data: createCartesianData(rawData),
-        config: {
-          boundaryGap: type === 'bar'
-        }
-      }
-    
-    case 'pie':
-    case 'rose':
-      return {
-        chartType: 'pie',
-        data: createPieData(rawData),
-        config: type === 'rose' ? { roseType: 'area' } : {}
-      }
-    
-    case 'radar':
-      return {
-        chartType: 'radar',
-        data: createRadarData(rawData),
-        config: {}
-      }
-    
-    case 'scatter':
-      return {
-        chartType: 'scatter',
-        data: createScatterData(rawData),
-        config: {}
-      }
-    
-    default:
-      return {
-        chartType: 'bar',
-        data: createCartesianData(rawData),
-        config: {}
-      }
-  }
-}
-
-// 创建直角坐标系数据（柱状图/折线图）
-function createCartesianData(rawData) {
-  const monthlyStats = {}
-  
-  rawData.forEach(activity => {
-    const key = `${activity.month}-${activity.activity}`
-    if (!monthlyStats[key]) {
-      monthlyStats[key] = {
-        month: activity.month,
-        activity: activity.activity,
-        total_visits: 0
-      }
-    }
-    monthlyStats[key].total_visits += activity.visits
-  })
-  
-  const converted = EChartsDataConverter.convertToEChartsData(
-    Object.values(monthlyStats),
-    { categoryField: 'month', valueField: 'total_visits', seriesField: 'activity' },
-    'bar'
-  )
-  
-  return {
-    xAxis: converted.xAxis.data,
-    series: converted.series.map(series => ({
-      name: series.name,
-      data: series.data
-    }))
-  }
-}
-
-// 创建饼图数据
-function createPieData(rawData) {
-  const activityStats = {}
-  
-  rawData.forEach(activity => {
-    if (!activityStats[activity.activity]) {
-      activityStats[activity.activity] = 0
-    }
-    activityStats[activity.activity] += activity.visits
-  })
-  
-  const pieData = Object.entries(activityStats).map(([name, value]) => ({
-    name,
-    value
-  }))
-  
-  return {
-    series: [{
-      data: pieData
-    }]
-  }
-}
-
-// 创建雷达图数据
-function createRadarData(rawData) {
-  const componentStats = {}
-  
-  rawData.forEach(activity => {
-    if (!componentStats[activity.component]) {
-      componentStats[activity.component] = {
-        '浏览组件': 0,
-        '下载源码': 0,
-        '使用文档': 0
-      }
-    }
-    componentStats[activity.component][activity.activity] += activity.visits
-  })
-  
-  const activities = ['浏览组件', '下载源码', '使用文档']
-  const maxValues = activities.map(activity => {
-    return Math.max(...Object.values(componentStats).map(comp => comp[activity] || 0))
-  })
-  
-  return {
-    indicator: activities.map((activity, index) => ({
-      name: activity,
-      max: maxValues[index] * 1.2
-    })),
-    series: [{
-      data: Object.keys(componentStats).slice(0, 3).map(component => ({
-        name: component,
-        value: activities.map(activity => componentStats[component][activity] || 0)
-      }))
-    }]
-  }
-}
-
-// 创建散点图数据
-function createScatterData(rawData) {
-  const scatterData = {}
-  
-  rawData.forEach(activity => {
-    if (!scatterData[activity.activity]) {
-      scatterData[activity.activity] = []
-    }
-    scatterData[activity.activity].push([activity.duration, activity.visits])
-  })
-  
-  return {
-    series: Object.entries(scatterData).map(([activity, data]) => ({
-      name: activity,
-      data: data
-    }))
-  }
+function onStoryChanged(newKey) {
+  // 故事组件请求切换内容类型
+  switchChartType(newKey, false) // false表示非手动操作
 }
 
 // 获取当前图表标题
 function getCurrentChartTitle() {
-  const titles = {
-    bar: '月度活动统计 - 柱状图展示',
-    line: '活动趋势分析 - 折线图展示',
-    pie: '行为类型分布 - 饼图展示',
-    rose: '行为类型分布 - 玫瑰图展示',
-    radar: '组件多维度分析 - 雷达图展示',
-    scatter: '时长与访问次数关系 - 散点图展示'
-  }
-  return titles[currentChartType.value] || '数据展示'
+  return getChartTitle(currentChartType.value)
 }
 </script>
 
