@@ -4,7 +4,7 @@
     <div class="max-w-8xl mx-auto px-4 md:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo区域 -->
-        <router-link to="/" class="flex items-center space-x-3 group">
+        <a @click="navigateWithScrollTop('/')" class="flex items-center space-x-3 group cursor-pointer">
           <!-- 简洁Logo -->
           <div class="relative">
             <div class="w-8 h-8 bg-[#2f4554] rounded-sm flex items-center justify-center group-hover:bg-[#c23531] transition-colors duration-300">
@@ -17,7 +17,7 @@
             <span class="text-xl font-bold text-[#2f4554] tracking-tight">Asuka</span>
             <span class="text-xs text-[#6e7074] -mt-1 tracking-wide">COMPONENTS</span>
           </div>
-        </router-link>
+        </a>
         
         <!-- 桌面端导航 -->
         <div class="hidden md:flex items-center space-x-8">
@@ -101,6 +101,36 @@
       </div>
     </transition>
   </nav>
+
+  <!-- 页面切换动画 -->
+  <transition name="page-transition">
+    <div v-if="isTransitioning" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
+      <div class="relative">
+        <!-- 动画Logo -->
+        <div class="relative rounded-sm w-full flex justify-center items-center animate-pulse">
+          <div class="w-16 h-16 bg-[#2f4554] rounded-sm flex items-center justify-center animate-bounce">
+            <span class="text-white font-bold text-2xl">A</span>
+          </div>
+          <div class="absolute rounded-sm -bottom-1 right-2 w-5 h-5 bg-[#c23531] opacity-80 animate-ping"></div>
+        </div>
+        
+        <!-- 品牌文字 -->
+        <div class="flex flex-col items-center mt-4 animate-fade-in">
+          <span class="text-2xl font-bold text-[#2f4554] tracking-tight">Asuka</span>
+          <span class="text-sm text-[#6e7074] tracking-wide">COMPONENTS</span>
+        </div>
+        
+        <!-- 加载指示器 -->
+        <div class="flex justify-center mt-6">
+          <div class="flex space-x-1">
+            <div class="w-2 h-2 bg-[#c23531] rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+            <div class="w-2 h-2 bg-[#c23531] rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+            <div class="w-2 h-2 bg-[#c23531] rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -110,6 +140,7 @@ export default {
   name: 'NavHeader',
   setup() {
     const showMobileMenu = ref(false)
+    const isTransitioning = ref(false)
 
     const toggleMobileMenu = () => {
       showMobileMenu.value = !showMobileMenu.value
@@ -119,31 +150,66 @@ export default {
       showMobileMenu.value = false
     }
 
+    // 页面切换动画控制
+    const showTransition = () => {
+      isTransitioning.value = true
+    }
+
+    const hideTransition = () => {
+      isTransitioning.value = false
+    }
+
     return {
       showMobileMenu,
+      isTransitioning,
       toggleMobileMenu,
-      closeMobileMenu
+      closeMobileMenu,
+      showTransition,
+      hideTransition
     }
   },
   methods: {
     handleComponentsClick() {
       this.closeMobileMenu()
       
-      // 滚动到顶部
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      
       if (this.$route.path === '/components') {
+        // 如果已经在组件页面，只需要滚动到顶部并重置页面
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         window.dispatchEvent(new CustomEvent('reset-components-page'))
       } else {
-        this.$router.push('/components')
+        // 显示动画，跳转页面，然后隐藏动画
+        this.showTransition()
+        setTimeout(() => {
+          this.$router.push('/components').then(() => {
+            window.scrollTo({ top: 0, behavior: 'auto' })
+            setTimeout(() => {
+              this.hideTransition()
+            }, 200)
+          })
+        }, 300)
       }
     },
     
     // 通用的导航跳转方法，包含回到顶部功能
     navigateWithScrollTop(to) {
       this.closeMobileMenu()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      this.$router.push(to)
+      
+      // 如果是当前页面，不需要动画
+      if (this.$route.path === to) {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+      
+      // 显示动画，跳转页面，然后隐藏动画
+      this.showTransition()
+      setTimeout(() => {
+        this.$router.push(to).then(() => {
+          window.scrollTo({ top: 0, behavior: 'auto' })
+          setTimeout(() => {
+            this.hideTransition()
+          }, 200)
+        })
+      }, 300)
     }
   }
 }
@@ -189,5 +255,40 @@ export default {
 .mobile-menu-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+/* 页面切换动画 */
+.page-transition-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.page-transition-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.page-transition-enter-from {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.page-transition-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
+}
+
+/* 自定义动画 */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
 }
 </style> 
