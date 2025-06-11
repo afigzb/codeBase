@@ -8,16 +8,20 @@
       <router-view />
     </main>
 
+    <!-- 页面切换动画 -->
+    <PageTransition />
   </div>
 </template>
 
 <script>
 import NavHeader from './components/NavHeader.vue'
+import PageTransition from './components/PageTransition.vue'
 
 export default {
   name: 'App',
   components: {
-    NavHeader
+    NavHeader,
+    PageTransition
   }
 }
 </script>
